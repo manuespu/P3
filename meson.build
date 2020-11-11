@@ -1,6 +1,6 @@
 project(
     'Práctica 3 de PAV - detección de pitch', 'cpp',
-    default_options: 'cpp_std=c++11',
+    default_options: ['prefix=/Users/manuescude/Desktop/PAV', 'libdir=lib', 'cpp_std=c++11'],
     version: 'v2.0'
 )
 
