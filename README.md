@@ -15,18 +15,137 @@ Ejercicios básicos
 
    * Complete el cálculo de la autocorrelación e inserte a continuación el código correspondiente.
 
-   * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
-     unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
-	 autocorrelación de la señal y la posición del primer máximo secundario.
+- **Autocorrelación**
+    ```
+     void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
 
-	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
-	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
+    for (unsigned int l = 0; l < r.size(); ++l) {
+  		/// \DONE Compute the autocorrelation r[l]
+      for(unsigned int n = 0; n < x.size()-1-l; ++n){
+        r[l] = x[n]*x[n+l] + r[l];
+      }
+        r[l] = (1.0F/x.size())*r[l];
+    }
 
-   * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
-     autocorrelación. Inserte a continuación el código correspondiente.
-
-   * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
-
+    if (r[0] == 0.0F) //to avoid log() and divide zero 
+      r[0] = 1e-10; 
+    }
+  
+  
+ - **Enventanado**
+      ```
+        void PitchAnalyzer::set_window(Window win_type) {
+        if (frameLen == 0)
+          return;
+    
+        window.resize(frameLen);
+    
+        switch (win_type) {
+        case HAMMING:{
+          /// \DONE Implement the Hamming window
+          float a0 = 0.53836F;
+          float a1 = 0.46164F;
+          for(unsigned int i = 0; i < frameLen; ++i){
+            window[i] = a0-a1*cos((2*M_PI*i)/(frameLen-1));
+          }
+        }  
+        break;
+    
+    
+        case RECT:
+        default:
+          window.assign(frameLen, 1);
+        }
+      }
+        
+    
+  
+ * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
+         unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
+    	 autocorrelación de la señal y la posición del primer máximo secundario.
+    
+    	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
+    	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
+    
+ * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
+         autocorrelación. Inserte a continuación el código correspondiente.
+     - **Seleccionar Periodo de Pitch**
+   ```
+    void PitchAnalyzer::set_f0_range(float min_F0, float max_F0) {
+        npitch_min = (unsigned int) samplingFreq/max_F0;
+        if (npitch_min < 2)
+          npitch_min = 2;  // samplingFreq/2
+    
+        npitch_max = 1 + (unsigned int) samplingFreq/min_F0;
+    
+        //frameLen should include at least 2*T0
+        if (npitch_max > frameLen/2)
+          npitch_max = frameLen/2;
+      }
+    
+* Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+    
+     - **Regla Decisión Sonoro/Sordo**
+       
+    ```
+     
+      bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+       
+        if ((pot < -39.0F || r1norm < 0.895F) && rmaxnorm < 0.48F)
+            return true;
+        else
+            return false;
+      }
+    
+    
+      float PitchAnalyzer::compute_pitch(vector<float> & x) const {
+        if (x.size() != frameLen)
+          return -1.0F;
+    
+        //Window input frame
+        for (unsigned int i=0; i<x.size(); ++i)
+          x[i] *= window[i];
+    
+        vector<float> r(npitch_max);
+    
+        //Compute correlation
+        autocorrelation(x, r);
+    
+        vector<float>::const_iterator iR = r.begin(), iRMax = iR;
+    
+        while(*iR > 0){
+          ++iR;
+        }
+        if (iR<r.begin() + npitch_min)
+          iR += npitch_min;
+        iRMax = iR;
+          while(iR != r.end()){
+        if(*iR > *iRMax){
+          iRMax = iR; //iRmax: Posición donde está el máximo
+        }
+        ++iR;
+        }
+        
+        unsigned int lag = iRMax - r.begin();
+    
+        float pot = 10 * log10(r[0]);
+    
+        //You can print these (and other) features, look at them using wavesurfer
+        //Based on that, implement a rule for unvoiced
+        //change to #if 1 and compile
+    #if 0
+        if (r[0] > 0.0F)
+          cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+    #endif
+        
+        if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
+          return 0;
+        else
+          return (float) samplingFreq/(float) lag;
+      }
+    }
+    ***
+       
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
 
@@ -47,14 +166,31 @@ Ejercicios básicos
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
   
-  * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
-    y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
-	`pitch_db/train`..
+  * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
+	`pitch_db/train`.. 
+	
+   
+ **Tabla Tasa de error y *score* TOTAL con optimización**
 
+Tipo de error | Tasa de error 
+------------- | ------------- 
+Unvoiced frames as voiced | 5.56 %
+Voiced frames as unvoiced | 9.07 %
+Gross voiced errors (+20%) | 2.04 %
+MSE of fine errors | 2.32 %
+
+
+**_score_ TOTAL** | **90.10 %**
+------------------|------------
+
+
+***
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
-   
+
+------------------------
+------------------------
 
 Ejercicios de ampliación
 ------------------------
