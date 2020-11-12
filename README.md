@@ -125,26 +125,9 @@ Ejercicios básicos
         }
         ++iR;
         }
-        
-        unsigned int lag = iRMax - r.begin();
-    
-        float pot = 10 * log10(r[0]);
-    
-        //You can print these (and other) features, look at them using wavesurfer
-        //Based on that, implement a rule for unvoiced
-        //change to #if 1 and compile
-    #if 0
-        if (r[0] > 0.0F)
-          cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
-    #endif
-        
-        if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
-          return 0;
-        else
-          return (float) samplingFreq/(float) lag;
-      }
+       
     }
-    ***
+    
        
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
@@ -165,23 +148,55 @@ Ejercicios básicos
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
+		
+		  * El mejor caso corresponde a la señál femenina sb022.wav con un 95.02 %
+		    <img src="BEST_CASE.PNG">
+		    
+		  * Podemos comparar el detector con el detector del Wavesurfer
+		<img src="best_case_wavesurfer.PNG">
+		
   
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`.. 
 	
    
  **Tabla Tasa de error y *score* TOTAL con optimización**
+ 
+ - Ambos
 
 Tipo de error | Tasa de error 
-------------- | ------------- 
+------------- | -------------
 Unvoiced frames as voiced | 5.56 %
 Voiced frames as unvoiced | 9.07 %
 Gross voiced errors (+20%) | 2.04 %
 MSE of fine errors | 2.32 %
 
+- Hombres
 
-**_score_ TOTAL** | **90.10 %**
-------------------|------------
+
+
+Tipo de error | Tasa de error
+------------- | -------------
+Unvoiced frames as voiced | 6.35 %
+Voiced frames as unvoiced | 14.18 %
+Gross voiced errors (+20%) | 3.09 %
+MSE of fine errors | 2.16 %
+
+- Mujeres
+
+Tipo de error | Tasa de error
+------------- | -------------
+Unvoiced frames as voiced | 4.94 %
+Voiced frames as unvoiced | 4.51 %
+Gross voiced errors (+20%) | 1.19 %
+MSE of fine errors | 2.48 %
+
+
+**Sexo** | **_score_ TOTAL** 
+---------|------------------
+ Ambos | **90.10 %**
+ Mujeres | **87.49 %**
+ Hombres | **92.25 %**
 
 
 ***

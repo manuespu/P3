@@ -36,7 +36,6 @@ Note:
     For each reference file, a test file is required in the same directory
     with the same base name and with extension .f0
 )";
-
 int main(int argc, const char * argv[])  {
   int vTot=0, uTot=0, vuTot=0, uvTot=0, nTot=0, grossTot=0, vvTot=0, nfiles=0;
   float fineTot=0.0F;

@@ -11,15 +11,14 @@ namespace upc {
   void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) const {
 
     for (unsigned int l = 0; l < r.size(); ++l) {
-  		/// \TODO Compute the autocorrelation r[l]
-      /// \DONE
+  		/// \DONE Compute the autocorrelation r[l]
       for(unsigned int n = 0; n < x.size()-1-l; ++n){
         r[l] = x[n]*x[n+l] + r[l];
       }
         r[l] = (1.0F/x.size())*r[l];
     }
 
-    if (r[0] == 0.0F) //to avoid log() and divide zero 
+    if (r[0] == 0.0F) 
       r[0] = 1e-10; 
   }
 
@@ -31,8 +30,7 @@ namespace upc {
 
     switch (win_type) {
     case HAMMING:{
-      /// \TODO Implement the Hamming window
-      /// \DONE
+      /// \DONE Implement the Hamming window
       float a0 = 0.53836F;
       float a1 = 0.46164F;
       for(unsigned int i = 0; i < frameLen; ++i){
@@ -40,7 +38,6 @@ namespace upc {
       }
     }  
     break;
-
 
     case RECT:
     default:
@@ -61,7 +58,7 @@ namespace upc {
   }
 
   bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
-    /// \TODO Implement a rule to decide whether the sound is voiced or not.
+    /// \DONE Implement a rule to decide whether the sound is voiced or not.
     /// * You can use the standard features (pot, r1norm, rmaxnorm),
     ///   or compute and use other ones.
     if ((pot < -39.0F || r1norm < 0.895F) && rmaxnorm < 0.48F)
@@ -85,41 +82,45 @@ namespace upc {
 
     vector<float>::const_iterator iR = r.begin(), iRMax = iR;
 
-    while(*iR > 0){
-      ++iR;
-    }
-    if (iR<r.begin() + npitch_min)
-      iR += npitch_min;
-    iRMax = iR;
-      while(iR != r.end()){
-    if(*iR > *iRMax){
-      iRMax = iR; //iRmax: Posición donde está el máximo
-    }
-    ++iR;
-    }
-
-    /// \TODO 
-    /// \DONE
+  /// \DONE
 	/// Find the lag of the maximum value of the autocorrelation away from the origin.<br>
 	/// Choices to set the minimum value of the lag are:
 	///    - The first negative value of the autocorrelation.
 	///    - The lag corresponding to the maximum value of the pitch.
-    ///	   .
+  ///	   .
 	/// In either case, the lag should not exceed that of the minimum value of the pitch.
 
-    unsigned int lag = iRMax - r.begin();
+    while(*iR > 0){
+      ++iR;
+    }
+    //After first negative value then pitch min.
+      if (iR<r.begin() + npitch_min)
+        iR += npitch_min;
+      iRMax = iR;
+     //when pitch_min then pitch Max range
+      while(iR != r.end()){
+        if(*iR > *iRMax){
+          iRMax = iR;    //iRMax
+        }
+      ++iR;
+      } 
 
-    float pot = 10 * log10(r[0]);
-
+  
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
+    unsigned int lag = iRMax - r.begin();
+
+    float pot = 10 * log10(r[0]);    //Power
+    float r1norm = r[1]/r[0];        //Normalized autocorrelation
+    float maxnorm = r[lag]/r[0];     //Maximum autocorrelation r[pitch]/r[0]
+
     //change to #if 1 and compile
-#if 0
+#if 1
     if (r[0] > 0.0F)
-      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+      cout << pot << '\t' << r1norm << '\t' << maxnorm << endl;
 #endif
     
-    if (unvoiced(pot, r[1]/r[0], r[lag]/r[0]))
+    if (unvoiced(pot, r1norm, maxnorm))
       return 0;
     else
       return (float) samplingFreq/(float) lag;
