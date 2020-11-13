@@ -1,7 +1,9 @@
 /// @file
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
+#include <errno.h>
 #include "pitch_analyzer.h"
 
 using namespace std;
@@ -113,6 +115,23 @@ namespace upc {
     float pot = 10 * log10(r[0]);    //Power
     float r1norm = r[1]/r[0];        //Normalized autocorrelation
     float maxnorm = r[lag]/r[0];     //Maximum autocorrelation r[pitch]/r[0]
+
+    //Printing files with autocorrelations
+    ofstream os("r1norm.txt", std::ofstream::app);
+    if(!os.good()) {
+      cerr << "Error reading file r1norm \n";
+      return -3;
+    }
+    os <<r[1]/r[0]<<'\n';
+
+    ofstream os1("rmaxnorm.txt", std::ofstream::app);
+    if(!os1.good()) {
+      cerr << "Error reading file rmaxnorm \n";
+      return -3;
+    }
+    os1 <<r[lag]/r[0]<<'\n';
+
+
 
     //change to #if 1 and compile
 #if 1

@@ -151,6 +151,8 @@ int main(int argc, const char *argv[]) {
     filter.clear();  
   } 
 
+  //FILE
+
   // Write f0 contour into the output file
   ofstream os(output_txt);
   if (!os.good()) {
@@ -162,6 +164,7 @@ int main(int argc, const char *argv[]) {
   for (iX = f0.begin(); iX != f0.end(); ++iX) 
     os << *iX << '\n';
   os << 0 << '\n';//pitch at t=Dur
+
 
   return 0;
 }

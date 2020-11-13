@@ -63,7 +63,9 @@ Ejercicios básicos
  * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
          unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
     	 autocorrelación de la señal y la posición del primer máximo secundario.
-    
+    	 
+          - Usamos la señal voiced.wav (/PAV/scripts) que es la vocal 'a'
+          
     	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
     	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
     
@@ -71,42 +73,7 @@ Ejercicios básicos
          autocorrelación. Inserte a continuación el código correspondiente.
      - **Seleccionar Periodo de Pitch**
    ```
-    void PitchAnalyzer::set_f0_range(float min_F0, float max_F0) {
-        npitch_min = (unsigned int) samplingFreq/max_F0;
-        if (npitch_min < 2)
-          npitch_min = 2;  // samplingFreq/2
-    
-        npitch_max = 1 + (unsigned int) samplingFreq/min_F0;
-    
-        //frameLen should include at least 2*T0
-        if (npitch_max > frameLen/2)
-          npitch_max = frameLen/2;
-      }
-    
-* Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
-    
-     - **Regla Decisión Sonoro/Sordo**
-       
-    ```
-     
-      bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
-       
-        if ((pot < -39.0F || r1norm < 0.895F) && rmaxnorm < 0.48F)
-            return true;
-        else
-            return false;
-      }
-    
-    
-      float PitchAnalyzer::compute_pitch(vector<float> & x) const {
-        if (x.size() != frameLen)
-          return -1.0F;
-    
-        //Window input frame
-        for (unsigned int i=0; i<x.size(); ++i)
-          x[i] *= window[i];
-    
-        vector<float> r(npitch_max);
+      vector<float> r(npitch_max);
     
         //Compute correlation
         autocorrelation(x, r);
@@ -126,9 +93,35 @@ Ejercicios básicos
         ++iR;
         }
        
-    }
+      }
     
+* Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+    
+     - **Regla Decisión Sonoro/Sordo**
        
+    ```
+     
+      bool PitchAnalyzer::unvoiced(float pot, float r1norm, float rmaxnorm) const {
+       
+        if ((pot < -39.0F || r1norm < 0.895F) && rmaxnorm < 0.48F)
+            return true;
+        else
+            return false;
+      }
+      //Los señales sonoros tienen más potencia
+      //Si es un señal sonoro con 2 maxs tiene Pitch
+     
+     
+     
+     float pot = 10 * log10(r[0]);    //Power
+     float r1norm = r[1]/r[0];        //Normalized autocorrelation
+     float maxnorm = r[lag]/r[0];     //Maximum autocorrelation r[pitch]/r[0]
+    
+
+      
+      }
+    
+Usamos la potencia y los coef. de autocorrelación. Hemos decidio no usar la tasa de cruces por cero al obtener sin ella resultados razonables.
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
 
@@ -144,7 +137,11 @@ Ejercicios básicos
 
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
 		en esta práctica es de 15 ms.
-
+		
+		<img src="grafica_sonoridad.PNG">
+		
+		La primera grafica corresponde a la señal de voz. La segunda a r1norm, la tercera a rmaxnorm y la cuarta al detector de pitch del wavesufer.
+		Los sonidos sonoros toman valores proximos a 1 en r1norm y rmaxnorm, y los sordos a 0. Por lo tanto la correlación en sonidos sordos es muy alta.
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 		ilustrativa del resultado de ambos detectores.
@@ -155,7 +152,7 @@ Ejercicios básicos
 		  * Podemos comparar el detector con el detector del Wavesurfer
 		<img src="best_case_wavesurfer.PNG">
 		
-  
+  No hemos conseguido visualizar en el wavesurfer el pitch por puntos, pero los valores son muy parecidos con los calculados por wavesurfer.
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`.. 
 	
@@ -172,7 +169,6 @@ Gross voiced errors (+20%) | 2.04 %
 MSE of fine errors | 2.32 %
 
 - Hombres
-
 
 
 Tipo de error | Tasa de error
