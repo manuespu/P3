@@ -2,7 +2,6 @@
 
 # Put here the program (maybe with path)
 GETF0="get_pitch"
-PITCH_DB=pitch_db
 
 for fwav in pitch_db/train/*.wav; do
     ff0=${fwav/.wav/.f0}
