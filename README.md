@@ -158,7 +158,7 @@ Usamos la potencia y los coef. de autocorrelación. Hemos decidio no usar la tas
 		  * Podemos comparar el detector con el detector del Wavesurfer
 		<img src="best_case_wavesurfer.PNG">
 		
-  No hemos conseguido visualizar en el wavesurfer el pitch por puntos, pero los valores son muy parecidos con los calculados por wavesurfer.
+  Los valores son muy parecidos con los calculados por wavesurfer.
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`.. 
 	
