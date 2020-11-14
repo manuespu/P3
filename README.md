@@ -65,7 +65,8 @@ Ejercicios básicos
     	 autocorrelación de la señal y la posición del primer máximo secundario
 	 <img src="plot_vocalA_ correlation.png">
     	 
-          - Usamos la señal voiced.wav (/PAV/scripts) que es la vocal 'a'
+      Usamos la señal voiced.wav (/PAV/scripts) que es la vocal 'a'
+          
     	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
     	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
     
@@ -140,7 +141,12 @@ Usamos la potencia y los coef. de autocorrelación. Hemos decidio no usar la tas
 		
 		<img src="grafica_sonoridad.PNG">
 		
-		La primera grafica corresponde a la señal de voz. La segunda a r1norm, la tercera a rmaxnorm y la cuarta al detector de pitch del wavesufer.
+		1. grafica: a la señal de voz. 
+		2. Potencia wavesurfer
+		3. grafica r1norm
+		4. grafica rmaxnorm 
+		5. detector de pitch del wavesufer.
+		
 		Los sonidos sonoros toman valores proximos a 1 en r1norm y rmaxnorm, y los sordos a 0. Por lo tanto la correlación en sonidos sordos es muy alta.
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
@@ -199,6 +205,19 @@ MSE of fine errors | 2.48 %
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
+	 
+	  - **Detector de Pitch** (arriba) y detector wavesurfer (abajo)
+	 
+<img src="resultado_detector_pitch.PNG">	 
+
+El detector de Pitch es muy parecido al del wavesurfer. Podemos analizar las principales diferencias:
+
+La frase es: Adrià Bedmar    Helena Vallés     ens agrada Ubuntu
+ 1. La primera diferencia destacable está en la **s** de Vallés. Es una consonante sorda. Nuestro detector detecta menos Pitch (sorda), mientras que el del wavesurfer detecta más Pitch (sonora).
+ 2. La segunda diferencia destacable está en **ens** que nuestro detector no detecta Pitch y el de wavesurfer sí. 
+ 
+    Nuestro detector es mejor filtrando el ruido, lo que permite diferenciar mejor entre letras sordas y sonoras. También puede provocar que no detecte alguna palabra.
+ 
 
 ------------------------
 ------------------------
