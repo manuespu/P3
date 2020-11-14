@@ -65,7 +65,7 @@ Ejercicios básicos
     	 autocorrelación de la señal y la posición del primer máximo secundario.
     	 
           - Usamos la señal voiced.wav (/PAV/scripts) que es la vocal 'a'
-          
+          <img src="plot_vocalA_ correlation.png">
     	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
     	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
     
