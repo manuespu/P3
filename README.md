@@ -155,7 +155,7 @@ Usamos la potencia y los coef. de autocorrelación. Hemos decidio no usar la tas
 		  * El mejor caso corresponde a la señál femenina sb022.wav con un 95.02 %
 		    <img src="BEST_CASE.PNG">
 		    
-		  * Podemos comparar el detector con el detector del Wavesurfer
+		  * Podemos comparar el detector(arriba) con el detector del Wavesurfer(abajo)
 		<img src="best_case_wavesurfer.PNG">
 		
   Los valores son muy parecidos con los calculados por wavesurfer.
