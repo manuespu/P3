@@ -62,10 +62,10 @@ Ejercicios básicos
   
  * Inserte una gŕafica donde, en un *subplot*, se vea con claridad la señal temporal de un segmento de
          unos 30 ms de un fonema sonoro y su periodo de pitch; y, en otro *subplot*, se vea con claridad la
-    	 autocorrelación de la señal y la posición del primer máximo secundario.
+    	 autocorrelación de la señal y la posición del primer máximo secundario
+	 <img src="plot_vocalA_ correlation.png">
     	 
           - Usamos la señal voiced.wav (/PAV/scripts) que es la vocal 'a'
-          <img src="plot_vocalA_ correlation.png">
     	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
     	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
     
